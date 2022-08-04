@@ -4,35 +4,178 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" >
     
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    <data>
+        <variable
+            name="viewModel"
+            type="com.android.calculator.MainActivityViewModel" />
+    </data>
+    
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.954"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.022" />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/formula"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="@{viewModel.formula}"
+            android:textSize="32sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fragment_view"
-        android:name="com.android.calculator.KeyboardFragment"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        app:layout_constraintVertical_bias="0.0" />
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:columnCount="4"
+            android:orientation="horizontal"
+            android:rowCount="5"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/formula">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/bt_clear"
+                android:text="@string/clear"
+                android:textColor="@color/red"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:onClick="@{viewModel.buttonClick}"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/bt_plus"
+                android:text="@string/plus"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:onClick="@{viewModel.buttonClick}"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/bt_minus"
+                android:text="@string/minus"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:onClick="@{viewModel.buttonClick}"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/bt_backspace"
+                android:text="@string/backspace"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:onClick="@{viewModel.buttonClick}"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/bt_seven"
+                android:text="@string/seven"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:onClick="@{viewModel.buttonClick}"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/bt_eight"
+                android:text="@string/eight"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:onClick="@{viewModel.buttonClick}"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/bt_nine"
+                android:text="@string/nine"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:onClick="@{viewModel.buttonClick}"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/bt_multiplication"
+                android:text="@string/multiplication"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:onClick="@{viewModel.buttonClick}"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/bt_four"
+                android:text="@string/four"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:onClick="@{viewModel.buttonClick}"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/bt_five"
+                android:text="@string/five"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:onClick="@{viewModel.buttonClick}"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/bt_six"
+                android:text="@string/six"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:onClick="@{viewModel.buttonClick}"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/bt_division"
+                android:text="@string/division"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:onClick="@{viewModel.buttonClick}"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/bt_one"
+                android:text="@string/one"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:onClick="@{viewModel.buttonClick}"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/bt_two"
+                android:text="@string/two"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:onClick="@{viewModel.buttonClick}"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/bt_three"
+                android:text="@string/three"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:onClick="@{viewModel.buttonClick}"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/bt_equals"
+                android:layout_rowSpan="2"
+                android:layout_gravity="fill_vertical"
+                android:gravity="center"
+                android:text="@string/equals"
+                android:layout_columnWeight="1"
+                android:onClick="@{viewModel.buttonClick}"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/bt_double_zero"
+                android:text="@string/double_zero"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:onClick="@{viewModel.buttonClick}"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/bt_zero"
+                android:text="@string/zero"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:onClick="@{viewModel.buttonClick}"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/bt_dot"
+                android:text="@string/dot"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:onClick="@{viewModel.buttonClick}"/>
+
+        </GridLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
