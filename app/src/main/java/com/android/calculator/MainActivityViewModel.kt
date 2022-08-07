@@ -1,29 +1,52 @@
 package com.android.calculator
 
+import android.app.Application
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import java.lang.NumberFormatException
+import java.text.DecimalFormat
+import kotlin.math.round
 
-class MainActivityViewModel : ViewModel() {
-    val liveDataFormula = MutableLiveData<String>()
+class MainActivityViewModel(application: Application) : AndroidViewModel(application) {
+    private val mApplication = application
+
+    var operatorFlag = false
+    var equalsFlag = false
+
+    private val liveDataFormula = MutableLiveData<String>()
     val formula : LiveData<String>
     get() = liveDataFormula
+
+    private val liveDataResult = MutableLiveData<String>()
+    val result : LiveData<String>
+    get() = liveDataResult
 
     init {
         liveDataFormula.value = "0"
     }
 
     fun buttonClick(view: View) {
-        if (liveDataFormula.value == null) liveDataFormula.value = "0"
+        if (liveDataFormula.value == null) {
+            liveDataFormula.value = "0"
+            liveDataResult.value = ""
+        }
         when(view.id) {
-            R.id.bt_clear -> liveDataFormula.value = "0"
-            R.id.bt_plus, R.id.bt_minus, R.id.bt_multiplication, R.id.bt_division -> operatorClick(view.id)
-            R.id.bt_backspace -> liveDataFormula.value = "개발중..."
-            R.id.bt_equals -> liveDataFormula.value = "개발중..."
-            R.id.bt_dot -> numberClick(".")
+            R.id.bt_clear -> {
+                liveDataFormula.value = "0"
+                liveDataResult.value = ""
+            }
+            R.id.bt_plus, R.id.bt_minus, R.id.bt_multiplication, R.id.bt_division -> {
+                if (equalsFlag) return
+                operatorClick(view.id)
+            }
+            //R.id.bt_backspace -> liveDataFormula.value = ""
+            R.id.bt_equals -> equalsClick()
+            //R.id.bt_dot -> numberClick(".")
             R.id.bt_double_zero -> numberClick("00")
             R.id.bt_zero -> numberClick("0")
             R.id.bt_one -> numberClick("1")
@@ -35,10 +58,16 @@ class MainActivityViewModel : ViewModel() {
             R.id.bt_seven -> numberClick("7")
             R.id.bt_eight -> numberClick("8")
             R.id.bt_nine -> numberClick("9")
+            else -> return
         }
     }
 
-    fun numberClick(number: String) {
+    private fun numberClick(number: String) {
+        if (equalsFlag) {
+            equalsFlag = false
+            liveDataFormula.value = "0"
+            liveDataResult.value = ""
+        }
         if (liveDataFormula.value == "0") {
             when(number) {
                 "1" -> liveDataFormula.value = "1"
@@ -54,7 +83,7 @@ class MainActivityViewModel : ViewModel() {
             }
         } else {
             when(number) {
-                "." -> liveDataFormula.value = liveDataFormula.value.plus(".")
+                //"." -> liveDataFormula.value = liveDataFormula.value.plus(".")
                 "00" -> liveDataFormula.value = liveDataFormula.value.plus("00")
                 "0" -> liveDataFormula.value = liveDataFormula.value.plus("0")
                 "1" -> liveDataFormula.value = liveDataFormula.value.plus("1")
@@ -66,18 +95,61 @@ class MainActivityViewModel : ViewModel() {
                 "7" -> liveDataFormula.value = liveDataFormula.value.plus("7")
                 "8" -> liveDataFormula.value = liveDataFormula.value.plus("8")
                 "9" -> liveDataFormula.value = liveDataFormula.value.plus("9")
+                else -> return
             }
         }
     }
 
-    fun operatorClick(viewId : Int) {
-        val formulaLength = liveDataFormula.value?.length
-        if (liveDataFormula.value == "0") return
+    private fun operatorClick(viewId : Int) {
+        if (liveDataFormula.value == "0" || operatorFlag) return
 
-        if (viewId == R.id.bt_plus) liveDataFormula.value = liveDataFormula.value.plus("+")
-        else if(viewId == R.id.bt_minus) liveDataFormula.value = liveDataFormula.value.plus("-")
-        else if(viewId == R.id.bt_multiplication) liveDataFormula.value = liveDataFormula.value.plus("×")
-        else if(viewId == R.id.bt_division) liveDataFormula.value = liveDataFormula.value.plus("÷")
+        when (viewId) {
+            R.id.bt_plus -> liveDataFormula.value = liveDataFormula.value.plus("+")
+            R.id.bt_minus -> liveDataFormula.value = liveDataFormula.value.plus("-")
+            R.id.bt_multiplication -> liveDataFormula.value = liveDataFormula.value.plus("×")
+            R.id.bt_division -> liveDataFormula.value = liveDataFormula.value.plus("÷")
+            else -> return
+        }
+
+        operatorFlag = true
     }
 
+    private fun equalsClick() {
+        lateinit var numberList : List<String>
+
+        try {
+            if(formula.value?.contains("+") == true){
+
+                numberList = formula.value?.split("+")!!
+                liveDataResult.value = (numberList[0].toInt() + numberList[1].toInt()).toString()
+
+            } else if(formula.value?.contains("-") == true) {
+
+                numberList = formula.value?.split("-")!!
+                liveDataResult.value = (numberList[0].toInt() - numberList[1].toInt()).toString()
+
+            } else if(formula.value?.contains("×") == true) {
+
+                numberList = formula.value?.split("×")!!
+                liveDataResult.value = (numberList[0].toInt() * numberList[1].toInt()).toString()
+
+            } else if(formula.value?.contains("÷") == true) {
+
+                numberList = formula.value?.split("÷")!!
+                val divisionFormula = numberList[0].toDouble() / numberList[1].toDouble()
+                val df = DecimalFormat("0.##")
+                liveDataResult.value = df.format(divisionFormula)
+
+            } else {
+                numberList = listOf()
+                Toast.makeText(mApplication, "계산할 수 없습니다.", Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: NumberFormatException) {
+            Toast.makeText(mApplication, "계산할 수 없습니다.", Toast.LENGTH_SHORT).show()
+        }
+
+        Log.i("MYTAG", "formula : ${formula.value} | Res : ${liveDataResult.value} | numberList : ${numberList}")
+        operatorFlag = false
+        equalsFlag = true
+    }
 }
