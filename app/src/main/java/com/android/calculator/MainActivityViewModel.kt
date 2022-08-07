@@ -18,10 +18,12 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     var operatorFlag = false
     var equalsFlag = false
 
+    // 계산식 LiveData
     private val liveDataFormula = MutableLiveData<String>()
     val formula : LiveData<String>
     get() = liveDataFormula
 
+    // 계산결과 LiveData
     private val liveDataResult = MutableLiveData<String>()
     val result : LiveData<String>
     get() = liveDataResult
@@ -35,6 +37,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
             liveDataFormula.value = "0"
             liveDataResult.value = ""
         }
+
         when(view.id) {
             R.id.bt_clear -> {
                 liveDataFormula.value = "0"
@@ -63,11 +66,14 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     }
 
     private fun numberClick(number: String) {
+        // 이전 계산이 TextView에 남아 있는 경우 ( equalsFlag == true )
         if (equalsFlag) {
             equalsFlag = false
             liveDataFormula.value = "0"
             liveDataResult.value = ""
         }
+
+        // 계산식 TextView가 현재 아무것도 없는 상태에서 숫자 입력
         if (liveDataFormula.value == "0") {
             when(number) {
                 "1" -> liveDataFormula.value = "1"
@@ -101,6 +107,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     }
 
     private fun operatorClick(viewId : Int) {
+        // 처음에는 연산자가 들어갈 수 없음 || 연산자 1개만 사용
         if (liveDataFormula.value == "0" || operatorFlag) return
 
         when (viewId) {
@@ -141,14 +148,15 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
                 liveDataResult.value = df.format(divisionFormula)
 
             } else {
+                // 수식에서 연산자를 입력하지 않은 경우
                 numberList = listOf()
                 Toast.makeText(mApplication, "계산할 수 없습니다.", Toast.LENGTH_SHORT).show()
             }
         } catch (e: NumberFormatException) {
+            // 수식에서 연산자가 가장 마지막에 적혀있는데 equalsClick()를 호출한 경우
             Toast.makeText(mApplication, "계산할 수 없습니다.", Toast.LENGTH_SHORT).show()
         }
 
-        Log.i("MYTAG", "formula : ${formula.value} | Res : ${liveDataResult.value} | numberList : ${numberList}")
         operatorFlag = false
         equalsFlag = true
     }
