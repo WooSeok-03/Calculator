@@ -47,7 +47,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
                 if (equalsFlag) return
                 operatorClick(view.id)
             }
-            //R.id.bt_backspace -> liveDataFormula.value = ""
+            R.id.bt_backspace -> liveDataFormula.value = backSpaceClick()
             R.id.bt_equals -> equalsClick()
             //R.id.bt_dot -> numberClick(".")
             R.id.bt_double_zero -> numberClick("00")
@@ -119,6 +119,14 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         }
 
         operatorFlag = true
+    }
+
+    private fun backSpaceClick(): String? {
+        val operatorList = listOf<String>("+", "-", "×", "÷")
+        for (i in operatorList) {
+            if(formula.value?.contains(i) == false) operatorFlag = false
+        }
+        return liveDataFormula.value?.replaceFirst(".$".toRegex(), "")
     }
 
     private fun equalsClick() {

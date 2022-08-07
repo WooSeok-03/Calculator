@@ -4,55 +4,39 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="viewModel"
             type="com.android.calculator.MainActivityViewModel" />
     </data>
 
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         tools:context=".MainActivity">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/formula"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="44dp"
+            android:layout_marginEnd="8dp"
+            android:text="@{viewModel.formula}"
+            android:textSize="32sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/formula"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="44dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginEnd="8dp"
-                android:text="@{viewModel.formula}"
-                android:textSize="32sp"
-
-                android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/result"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:text="@{viewModel.result}"
-                android:textSize="64sp"
-                android:textStyle="bold"
-
-                android:layout_below="@+id/formula"
-                android:layout_alignRight="@+id/formula"
-
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/formula" />
-        </RelativeLayout>
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="@{viewModel.result}"
+            android:textSize="64sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/formula" />
 
         <GridLayout
             android:layout_width="match_parent"
@@ -63,8 +47,7 @@
             android:rowCount="5"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/formula">
+            app:layout_constraintStart_toStartOf="parent">
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/bt_clear"
@@ -90,6 +73,7 @@
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/bt_backspace"
+                android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
                 android:gravity="center"
                 android:onClick="@{viewModel::buttonClick}"
@@ -204,6 +188,5 @@
 
         </GridLayout>
 
-
-    </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
