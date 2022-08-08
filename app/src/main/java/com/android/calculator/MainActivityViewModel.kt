@@ -15,8 +15,10 @@ import kotlin.math.round
 class MainActivityViewModel(application: Application) : AndroidViewModel(application) {
     private val mApplication = application
 
+    private val operatorList = listOf<String>("+", "-", "×", "÷")
     var operatorFlag = false
     var equalsFlag = false
+    var dotFlag = false
 
     // 계산식 LiveData
     private val liveDataFormula = MutableLiveData<String>()
@@ -49,7 +51,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
             }
             R.id.bt_backspace -> liveDataFormula.value = backSpaceClick()
             R.id.bt_equals -> equalsClick()
-            //R.id.bt_dot -> numberClick(".")
+            R.id.bt_dot -> dotClick()
             R.id.bt_double_zero -> numberClick("00")
             R.id.bt_zero -> numberClick("0")
             R.id.bt_one -> numberClick("1")
@@ -89,7 +91,6 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
             }
         } else {
             when(number) {
-                //"." -> liveDataFormula.value = liveDataFormula.value.plus(".")
                 "00" -> liveDataFormula.value = liveDataFormula.value.plus("00")
                 "0" -> liveDataFormula.value = liveDataFormula.value.plus("0")
                 "1" -> liveDataFormula.value = liveDataFormula.value.plus("1")
@@ -119,10 +120,23 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         }
 
         operatorFlag = true
+        dotFlag = false
+    }
+
+    private fun dotClick() {
+        // . 가 이미 들어간 수에는 입력할 수 없음
+        if (dotFlag) return
+
+        // 마지막 문자가 연산자인 경우, . 를 적을 수 없음
+        for(i in operatorList) {
+            if (liveDataFormula.value?.endsWith(i) == true) return
+        }
+
+        liveDataFormula.value = liveDataFormula.value.plus(".")
+        dotFlag = true
     }
 
     private fun backSpaceClick(): String? {
-        val operatorList = listOf<String>("+", "-", "×", "÷")
         for (i in operatorList) {
             if(formula.value?.contains(i) == false) operatorFlag = false
         }
@@ -131,41 +145,47 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
 
     private fun equalsClick() {
         lateinit var numberList : List<String>
+        val df = DecimalFormat("#.##")  // 소수점 2자리수 까지만 나타내도록 format
 
         try {
             if(formula.value?.contains("+") == true){
 
                 numberList = formula.value?.split("+")!!
-                liveDataResult.value = (numberList[0].toInt() + numberList[1].toInt()).toString()
+                val plusFormula = numberList[0].toDouble() + numberList[1].toDouble()
+                liveDataResult.value = df.format(plusFormula)
 
             } else if(formula.value?.contains("-") == true) {
 
                 numberList = formula.value?.split("-")!!
-                liveDataResult.value = (numberList[0].toInt() - numberList[1].toInt()).toString()
+                val minusFormula = numberList[0].toDouble() - numberList[1].toDouble()
+                liveDataResult.value = df.format(minusFormula)
 
             } else if(formula.value?.contains("×") == true) {
 
                 numberList = formula.value?.split("×")!!
-                liveDataResult.value = (numberList[0].toInt() * numberList[1].toInt()).toString()
+                val multiplicationFormula = numberList[0].toDouble() * numberList[1].toDouble()
+                liveDataResult.value = df.format(multiplicationFormula)
 
             } else if(formula.value?.contains("÷") == true) {
 
                 numberList = formula.value?.split("÷")!!
                 val divisionFormula = numberList[0].toDouble() / numberList[1].toDouble()
-                val df = DecimalFormat("0.##")
                 liveDataResult.value = df.format(divisionFormula)
 
             } else {
                 // 수식에서 연산자를 입력하지 않은 경우
-                numberList = listOf()
+                numberList = listOf("0")
                 Toast.makeText(mApplication, "계산할 수 없습니다.", Toast.LENGTH_SHORT).show()
+                return
             }
         } catch (e: NumberFormatException) {
-            // 수식에서 연산자가 가장 마지막에 적혀있는데 equalsClick()를 호출한 경우
+            // 수식에서 연산자가 가장 마지막에 적혀있을 때, equalsClick()를 호출한 경우
             Toast.makeText(mApplication, "계산할 수 없습니다.", Toast.LENGTH_SHORT).show()
+            return
         }
 
         operatorFlag = false
         equalsFlag = true
+        dotFlag = false
     }
 }
