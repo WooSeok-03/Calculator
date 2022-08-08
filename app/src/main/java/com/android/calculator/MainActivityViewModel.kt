@@ -35,10 +35,6 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     }
 
     fun buttonClick(view: View) {
-        if (liveDataFormula.value == null) {
-            liveDataFormula.value = "0"
-            liveDataResult.value = ""
-        }
 
         when(view.id) {
             R.id.bt_clear -> {
@@ -137,12 +133,15 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     }
 
     private fun backSpaceClick(): String? {
-        if(liveDataFormula.value == "0") return "0"
+        val currentFormula = liveDataFormula.value?.replaceFirst(".$".toRegex(), "")
+
+        // 초기 값인 0일 때는 백스페이스 적용 X || 백스페이스한 후의 TextView가 비어있지 않도록 한다
+        if(liveDataFormula.value == "0" || currentFormula == "") return "0"
 
         for (i in operatorList) {
             if(formula.value?.contains(i) == false) operatorFlag = false
         }
-        return liveDataFormula.value?.replaceFirst(".$".toRegex(), "")
+        return currentFormula
     }
 
     private fun equalsClick() {
