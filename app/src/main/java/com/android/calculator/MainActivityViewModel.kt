@@ -137,6 +137,8 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     }
 
     private fun backSpaceClick(): String? {
+        if(liveDataFormula.value == "0") return "0"
+
         for (i in operatorList) {
             if(formula.value?.contains(i) == false) operatorFlag = false
         }
@@ -188,4 +190,5 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         equalsFlag = true
         dotFlag = false
     }
+
 }
