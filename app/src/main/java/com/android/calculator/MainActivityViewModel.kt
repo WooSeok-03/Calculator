@@ -7,10 +7,8 @@ import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import java.lang.NumberFormatException
 import java.text.DecimalFormat
-import kotlin.math.round
 
 class MainActivityViewModel(application: Application) : AndroidViewModel(application) {
     private val mApplication = application
@@ -35,6 +33,11 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     }
 
     fun buttonClick(view: View) {
+
+        if (liveDataFormula.value?.length!! >= 15) {
+            Toast.makeText(mApplication, "15자리까지 입력할 수 있습니다.\n(숫자, 연산자 포함)", Toast.LENGTH_SHORT).show()
+            return
+        }
 
         when(view.id) {
             R.id.bt_clear -> {
