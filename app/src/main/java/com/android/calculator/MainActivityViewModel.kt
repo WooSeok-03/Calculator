@@ -3,6 +3,7 @@ package com.android.calculator
 import android.app.Application
 import android.util.Log
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -18,6 +19,11 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     var equalsFlag = false
     var dotFlag = false
 
+    // 계산기록 보기/가리기
+    private var lvHistoryState = MutableLiveData<Int>()
+    val historyState : LiveData<Int>
+    get() = lvHistoryState
+
     // 계산식 LiveData
     private val liveDataFormula = MutableLiveData<String>()
     val formula : LiveData<String>
@@ -30,6 +36,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
 
     init {
         liveDataFormula.value = "0"
+        lvHistoryState.value = View.GONE
     }
 
     fun buttonClick(view: View) {
@@ -193,4 +200,17 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         dotFlag = false
     }
 
+    /*
+     *  [ 계산 기록 ]
+     */
+    fun viewHistory(view: View) {
+        lvHistoryState.value =
+            if (lvHistoryState.value == View.GONE) View.VISIBLE
+            else View.GONE
+        Log.i("MYTAG", "${lvHistoryState.value}")
+    }
+
+    fun allDeleteButtonClick(view: View) {
+        Toast.makeText(mApplication, "개발중...", Toast.LENGTH_SHORT).show()
+    }
 }
