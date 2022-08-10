@@ -20,10 +20,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:layout_marginEnd="16dp"
             android:text="@{viewModel.formula}"
             android:textSize="32sp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.95"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -31,11 +32,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
             android:text="@{viewModel.result}"
             android:textSize="50sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.95"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/formula" />
 
 
@@ -55,7 +57,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginBottom="12dp"
             android:src="@drawable/ic_history_icon"
-            android:onClick="@{viewModel::viewHistory}"
+            android:onClick="@{viewModel::buttonClick}"
             android:background="?attr/selectableItemBackgroundBorderless"
             app:layout_constraintBottom_toTopOf="@+id/appCompatImageView"
             app:layout_constraintStart_toStartOf="parent" />
@@ -315,7 +317,8 @@
                     android:id="@+id/recyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toTopOf="@+id/bt_all_delete"/>
+                    app:layout_constraintBottom_toTopOf="@+id/bt_all_delete"
+                    tools:listitem="@layout/item_history"/>
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/bt_all_delete"
@@ -323,7 +326,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
                     android:src="@drawable/ic_all_delete_button"
-                    android:onClick="@{viewModel::allDeleteButtonClick}"
+                    android:onClick="@{viewModel::buttonClick}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />

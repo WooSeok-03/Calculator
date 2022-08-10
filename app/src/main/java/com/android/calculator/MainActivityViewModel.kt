@@ -3,7 +3,6 @@ package com.android.calculator
 import android.app.Application
 import android.util.Log
 import android.view.View
-import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -15,9 +14,9 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     private val mApplication = application
 
     private val operatorList = listOf<String>("+", "-", "×", "÷")
-    var operatorFlag = false
-    var equalsFlag = false
-    var dotFlag = false
+    private var operatorFlag = false
+    private var equalsFlag = false
+    private var dotFlag = false
 
     // 계산기록 보기/가리기
     private var lvHistoryState = MutableLiveData<Int>()
@@ -69,6 +68,8 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
             R.id.bt_seven -> numberClick("7")
             R.id.bt_eight -> numberClick("8")
             R.id.bt_nine -> numberClick("9")
+            R.id.bt_history -> viewHistory()
+            R.id.bt_all_delete -> allDeleteButtonClick()
             else -> return
         }
     }
@@ -201,16 +202,18 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     }
 
     /*
-     *  [ 계산 기록 ]
+     *  [ 계산 기록 ] drawable/ic_history_icon
      */
-    fun viewHistory(view: View) {
-        lvHistoryState.value =
-            if (lvHistoryState.value == View.GONE) View.VISIBLE
-            else View.GONE
+
+
+    private fun viewHistory() {
+        if (lvHistoryState.value != View.GONE) lvHistoryState.value = View.GONE
+        else lvHistoryState.value = View.VISIBLE
+
         Log.i("MYTAG", "${lvHistoryState.value}")
     }
 
-    fun allDeleteButtonClick(view: View) {
+    private fun allDeleteButtonClick() {
         Toast.makeText(mApplication, "개발중...", Toast.LENGTH_SHORT).show()
     }
 }
