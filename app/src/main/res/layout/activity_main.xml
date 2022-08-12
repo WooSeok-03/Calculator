@@ -296,7 +296,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginBottom="16dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:onClick="@{viewModel::buttonClick}"
+            android:onClick="@{()->viewModel.equalsClick()}"
             android:src="@drawable/ic_equals_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/bt_dot" />

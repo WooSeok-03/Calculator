@@ -26,6 +26,7 @@ class MainActivity : AppCompatActivity() {
         viewModel.history.observe(this, Observer {
             adapter.setList(it)
         })
+
     }
 
     private fun initialize() {
@@ -37,6 +38,6 @@ class MainActivity : AppCompatActivity() {
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = HistoryAdapter()
         binding.recyclerView.adapter = adapter
-        //binding.recyclerView.scrollToPosition(  -1)   // 스크롤 최하단부터 보여주기
+        binding.recyclerView.scrollToPosition(adapter.itemCount -1)   // 스크롤 최하단부터 보여주기
     }
 }

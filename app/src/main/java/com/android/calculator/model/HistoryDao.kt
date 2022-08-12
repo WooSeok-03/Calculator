@@ -9,7 +9,7 @@ import androidx.room.Query
 @Dao
 interface HistoryDao {
     @Query("SELECT * FROM History")
-    fun getAll() : List<History>
+    suspend fun getAll() : List<History>
 
     @Insert
     suspend fun insert(history: History)
