@@ -7,6 +7,10 @@ import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.android.calculator.model.History
+import com.android.calculator.model.HistoryDao
+import com.android.calculator.model.HistoryDatabase
+import kotlinx.coroutines.*
 import java.lang.NumberFormatException
 import java.text.DecimalFormat
 
@@ -32,6 +36,11 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     private val liveDataResult = MutableLiveData<String>()
     val result : LiveData<String>
     get() = liveDataResult
+
+    // 계산 기록 LiveData
+    private val livDataHistory = MutableLiveData<List<History>>()
+    val history : LiveData<List<History>>
+    get() = livDataHistory
 
     init {
         liveDataFormula.value = "0"
@@ -69,6 +78,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
             R.id.bt_eight -> numberClick("8")
             R.id.bt_nine -> numberClick("9")
             R.id.bt_history -> viewHistory()
+            //R.id.bt_delete -> historyDelete()
             R.id.bt_all_delete -> allDeleteButtonClick()
             else -> return
         }
@@ -196,24 +206,47 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
             return
         }
 
+        val historyFormula: String = formula.value.toString()
+        val historyResult: String = result.value.toString()
+        historyInsert(History(history_formula = historyFormula, history_result = historyResult))
+
         operatorFlag = false
         equalsFlag = true
         dotFlag = false
     }
 
-    /*
-     *  [ 계산 기록 ] drawable/ic_history_icon
-     */
 
-
+    /* [ 계산 기록 ] */
     private fun viewHistory() {
         if (lvHistoryState.value != View.GONE) lvHistoryState.value = View.GONE
         else lvHistoryState.value = View.VISIBLE
 
-        Log.i("MYTAG", "${lvHistoryState.value}")
+        historyGetAll()
     }
 
     private fun allDeleteButtonClick() {
         Toast.makeText(mApplication, "개발중...", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun historyGetAll() {
+        val historyDB = HistoryDatabase.getInstance(mApplication)
+        CoroutineScope(Dispatchers.IO).launch {
+            historyDB?.historyDao()?.getAll()
+        }
+
+    }
+
+    private fun historyInsert(history: History) {
+        val historyDB = HistoryDatabase.getInstance(mApplication)
+        CoroutineScope(Dispatchers.IO).launch {
+            historyDB?.historyDao()?.insert(history)
+        }
+    }
+
+    fun historyDelete(history: History) {
+        val historyDB = HistoryDatabase.getInstance(mApplication)
+        CoroutineScope(Dispatchers.IO).launch {
+            historyDB?.historyDao()?.delete(history)
+        }
     }
 }

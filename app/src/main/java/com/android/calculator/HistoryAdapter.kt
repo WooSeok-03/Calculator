@@ -1,18 +1,22 @@
 package com.android.calculator
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.android.calculator.databinding.ItemHistoryBinding
+import com.android.calculator.model.History
 
-class HistoryAdapter(private val historyList: List<HistoryData>) : RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() {
+class HistoryAdapter() : RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() {
 
     inner class HistoryViewHolder(private val binding: ItemHistoryBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(history: HistoryData) {
+        fun bind(history: History) {
             binding.historyFormula.text = history.history_formula
             binding.historyResult.text = history.history_result
         }
     }
+
+    private val items = ArrayList<History>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryViewHolder {
         val binding = ItemHistoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -20,8 +24,14 @@ class HistoryAdapter(private val historyList: List<HistoryData>) : RecyclerView.
     }
 
     override fun onBindViewHolder(holder: HistoryViewHolder, position: Int) {
-        holder.bind(historyList[position])
+        holder.bind(items[position])
     }
 
-    override fun getItemCount(): Int = historyList.size
+    override fun getItemCount(): Int = items.size
+
+    fun setList(histories: List<History>) {
+        items.clear()
+        items.addAll(histories)
+        notifyDataSetChanged()
+    }
 }
