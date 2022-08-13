@@ -58,7 +58,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginBottom="12dp"
             android:src="@drawable/ic_history_icon"
-            android:onClick="@{viewModel::buttonClick}"
+            android:onClick="@{()->viewModel.viewHistory()}"
             android:background="?attr/selectableItemBackgroundBorderless"
             app:layout_constraintBottom_toTopOf="@+id/appCompatImageView"
             app:layout_constraintStart_toStartOf="parent" />
@@ -284,7 +284,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginBottom="16dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:onClick="@{viewModel::buttonClick}"
+            android:onClick="@{()->viewModel.dotClick()}"
             android:src="@drawable/ic_dot_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/bt_zero" />
@@ -306,7 +306,6 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:background="@color/white"
-            android:visibility="@{viewModel.historyState}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/appCompatImageView">
 
@@ -327,7 +326,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
                     android:src="@drawable/ic_all_delete_button"
-                    android:onClick="@{viewModel::buttonClick}"
+                    android:onClick="@{()->viewModel.historyDeleteAll()}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />

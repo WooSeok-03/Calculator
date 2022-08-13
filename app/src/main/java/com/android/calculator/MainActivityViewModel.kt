@@ -7,8 +7,8 @@ import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.android.calculator.model.History
-import com.android.calculator.model.HistoryDao
 import com.android.calculator.model.HistoryDatabase
 import kotlinx.coroutines.*
 import java.lang.NumberFormatException
@@ -17,14 +17,14 @@ import java.text.DecimalFormat
 class MainActivityViewModel(application: Application) : AndroidViewModel(application) {
     private val mApplication = application
 
-    private val operatorList = listOf<String>("+", "-", "×", "÷")
+    private val operatorList = listOf("+", "-", "×", "÷")
     private var operatorFlag = false
     private var equalsFlag = false
     private var dotFlag = false
 
     // 계산기록 보기/가리기
-    private var lvHistoryState = MutableLiveData<Int>()
-    val historyState : LiveData<Int>
+    private var lvHistoryState = MutableLiveData(false)
+    val historyState : LiveData<Boolean>
     get() = lvHistoryState
 
     // 계산식 LiveData
@@ -44,10 +44,10 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
 
     init {
         liveDataFormula.value = "0"
-        lvHistoryState.value = View.GONE
     }
 
     fun buttonClick(view: View) {
+        if (lvHistoryState.value == true) return
 
         if (liveDataFormula.value?.length!! >= 15) {
             Toast.makeText(mApplication, "15자리까지 입력할 수 있습니다.\n(숫자, 연산자 포함)", Toast.LENGTH_SHORT).show()
@@ -64,7 +64,6 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
                 operatorClick(view.id)
             }
             R.id.bt_backspace -> liveDataFormula.value = backSpaceClick()
-            R.id.bt_dot -> dotClick()
             R.id.bt_double_zero -> numberClick("00")
             R.id.bt_zero -> numberClick("0")
             R.id.bt_one -> numberClick("1")
@@ -76,8 +75,6 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
             R.id.bt_seven -> numberClick("7")
             R.id.bt_eight -> numberClick("8")
             R.id.bt_nine -> numberClick("9")
-            R.id.bt_history -> viewHistory()
-            R.id.bt_all_delete -> historyDeleteAll()
             else -> return
         }
     }
@@ -138,7 +135,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         dotFlag = false
     }
 
-    private fun dotClick() {
+    fun dotClick() {
         // . 가 이미 들어간 수에는 입력할 수 없음
         if (dotFlag) return
 
@@ -215,17 +212,18 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
 
 
     /* [ 계산 기록 ] */
-    private fun viewHistory() {
-        if (lvHistoryState.value != View.GONE) lvHistoryState.value = View.GONE
-        else lvHistoryState.value = View.VISIBLE
-
+    fun viewHistory() {
+        lvHistoryState.value = lvHistoryState.value == true
         historyGetAll()
     }
 
+//    fun deleteClick() {
+//        //historyDelete()
+//    }
 
     private fun historyGetAll() {
         val historyDB = HistoryDatabase.getInstance(mApplication)
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val items = historyDB?.historyDao()?.getAll()
             withContext(Dispatchers.Main) {
                 liveDataHistory.value = items
@@ -236,21 +234,21 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
 
     private fun historyInsert(history: History) {
         val historyDB = HistoryDatabase.getInstance(mApplication)
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch(Dispatchers.IO) {
             historyDB?.historyDao()?.insert(history)
         }
     }
 
     fun historyDelete(history: History) {
         val historyDB = HistoryDatabase.getInstance(mApplication)
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch(Dispatchers.IO) {
             historyDB?.historyDao()?.delete(history)
         }
     }
 
-    private fun historyDeleteAll() {
+    fun historyDeleteAll() {
         val historyDB = HistoryDatabase.getInstance(mApplication)
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch {
             historyDB?.historyDao()?.deleteAll()
             withContext(Dispatchers.Main) {
                 liveDataHistory.value = listOf()

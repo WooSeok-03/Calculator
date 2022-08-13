@@ -1,8 +1,9 @@
 package com.android.calculator
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -22,11 +23,8 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
 
         initialize()
-
-        viewModel.history.observe(this, Observer {
-            adapter.setList(it)
-        })
-
+        historyLayoutOnOff()
+        showHistory()
     }
 
     private fun initialize() {
@@ -34,10 +32,35 @@ class MainActivity : AppCompatActivity() {
         binding.lifecycleOwner = this
 
         // RecyclerView init
-
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = HistoryAdapter()
         binding.recyclerView.adapter = adapter
         binding.recyclerView.scrollToPosition(adapter.itemCount -1)   // 스크롤 최하단부터 보여주기
+    }
+
+    private fun historyLayoutOnOff() {
+        // HistoryLayout on/off
+        viewModel.historyState.observe(this, Observer {
+            if(binding.historyLayout.visibility == View.GONE) {
+                binding.historyLayout.visibility = View.VISIBLE
+            } else {
+                binding.historyLayout.visibility = View.GONE
+            }
+        })
+    }
+
+    private fun showHistory() {
+        viewModel.history.observe(this, Observer {
+            adapter.setList(it)
+            binding.recyclerView.scrollToPosition(adapter.itemCount -1)
+        })
+    }
+
+    override fun onBackPressed() {
+        if(binding.historyLayout.visibility == View.VISIBLE) {
+            binding.historyLayout.visibility = View.GONE
+        } else {
+            super.onBackPressed()
+        }
     }
 }
