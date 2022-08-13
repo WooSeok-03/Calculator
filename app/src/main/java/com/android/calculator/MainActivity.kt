@@ -3,6 +3,8 @@ package com.android.calculator
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -33,7 +35,7 @@ class MainActivity : AppCompatActivity() {
 
         // RecyclerView init
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
-        adapter = HistoryAdapter()
+        adapter = HistoryAdapter(this)
         binding.recyclerView.adapter = adapter
         binding.recyclerView.scrollToPosition(adapter.itemCount -1)   // 스크롤 최하단부터 보여주기
     }
@@ -55,6 +57,7 @@ class MainActivity : AppCompatActivity() {
             binding.recyclerView.scrollToPosition(adapter.itemCount -1)
         })
     }
+
 
     override fun onBackPressed() {
         if(binding.historyLayout.visibility == View.VISIBLE) {

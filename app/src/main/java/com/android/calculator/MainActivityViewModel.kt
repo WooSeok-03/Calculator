@@ -201,6 +201,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
             return
         }
 
+        // 계산 결과를 Insert
         val historyFormula: String = formula.value.toString()
         val historyResult: String = result.value.toString()
         historyInsert(History(history_formula = historyFormula, history_result = historyResult))
@@ -217,10 +218,6 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         historyGetAll()
     }
 
-//    fun deleteClick() {
-//        //historyDelete()
-//    }
-
     private fun historyGetAll() {
         val historyDB = HistoryDatabase.getInstance(mApplication)
         viewModelScope.launch(Dispatchers.IO) {
@@ -229,20 +226,12 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
                 liveDataHistory.value = items
             }
         }
-
     }
 
     private fun historyInsert(history: History) {
         val historyDB = HistoryDatabase.getInstance(mApplication)
         viewModelScope.launch(Dispatchers.IO) {
             historyDB?.historyDao()?.insert(history)
-        }
-    }
-
-    fun historyDelete(history: History) {
-        val historyDB = HistoryDatabase.getInstance(mApplication)
-        viewModelScope.launch(Dispatchers.IO) {
-            historyDB?.historyDao()?.delete(history)
         }
     }
 
