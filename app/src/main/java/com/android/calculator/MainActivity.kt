@@ -1,5 +1,6 @@
 package com.android.calculator
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -25,8 +26,14 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
 
         initialize()
+
         historyLayoutOnOff()
         showHistory()
+
+        binding.btSplit.setOnClickListener {
+            val intent = Intent(this, SplitActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun initialize() {
