@@ -19,4 +19,5 @@
     <string name="equals">=</string>
     <string name="clear">C</string>
     <string name="backspace">←</string>
+    <string name="price_hint">금액을 입력해주세요.</string>
 </resources>
