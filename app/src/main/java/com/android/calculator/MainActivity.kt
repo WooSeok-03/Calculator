@@ -25,15 +25,10 @@ class MainActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
 
+
         initialize()
-
-        historyLayoutOnOff()
         showHistory()
-
-        binding.btSplit.setOnClickListener {
-            val intent = Intent(this, SplitActivity::class.java)
-            startActivity(intent)
-        }
+        goSplitActivity()
     }
 
     private fun initialize() {
@@ -47,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         binding.recyclerView.scrollToPosition(adapter.itemCount -1)   // 스크롤 최하단부터 보여주기
     }
 
-    private fun historyLayoutOnOff() {
+    private fun showHistory() {
         // HistoryLayout on/off
         viewModel.historyState.observe(this, Observer {
             if(binding.historyLayout.visibility == View.GONE) {
@@ -56,15 +51,19 @@ class MainActivity : AppCompatActivity() {
                 binding.historyLayout.visibility = View.GONE
             }
         })
-    }
 
-    private fun showHistory() {
         viewModel.history.observe(this, Observer {
             adapter.setList(it)
             binding.recyclerView.scrollToPosition(adapter.itemCount -1)
         })
     }
 
+    fun goSplitActivity() {
+        binding.btSplit.setOnClickListener {
+            val intent = Intent(this, SplitActivity::class.java)
+            startActivity(intent)
+        }
+    }
 
     override fun onBackPressed() {
         if(binding.historyLayout.visibility == View.VISIBLE) {

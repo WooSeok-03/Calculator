@@ -1,5 +1,6 @@
 package com.android.calculator
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
@@ -17,6 +18,11 @@ class SplitActivity : AppCompatActivity() {
         splitViewModel = ViewModelProvider(this).get(SpiltActivityViewModel::class.java)
 
         initialize()
+
+        binding.btGoBack.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun initialize() {
