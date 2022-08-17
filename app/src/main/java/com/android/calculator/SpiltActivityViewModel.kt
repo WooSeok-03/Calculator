@@ -17,13 +17,12 @@ class SpiltActivityViewModel(application: Application) : AndroidViewModel(applic
     var liveDataResult = MutableLiveData<String>("0")    // N등분 이후의 금액
 
 
-
     fun goDutch() {
         val df = DecimalFormat("#,###")
 
         if (liveDataPrice.value?.isNullOrEmpty() == false && liveDataPrice.value?.isNullOrBlank() == false) {
-            liveDataResult.value =
-                df.format(liveDataPrice.value?.toInt()!! / liveDataCount.value?.toInt()!!)
+            val price = liveDataPrice.value?.replace(",", "")
+            liveDataResult.value = df.format(price?.toInt()!! / liveDataCount.value?.toInt()!!)
         } else {
             liveDataResult.value = "0"
         }
