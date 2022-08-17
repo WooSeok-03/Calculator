@@ -12,24 +12,26 @@ import java.text.DecimalFormat
 class SpiltActivityViewModel(application: Application) : AndroidViewModel(application) {
     private val sApplication = application
 
-    // N
-    private val liveDataCount = MutableLiveData<String>("1")
-    val countNumber : LiveData<String>
-    get() = liveDataCount
+    var liveDataCount = MutableLiveData<String>("1")      // N
+    var liveDataPrice = MutableLiveData<String>()              // N등분할 금액
+    var liveDataResult = MutableLiveData<String>("0")    // N등분 이후의 금액
 
-    // N등분할 금액
-    var liveDataPrice = MutableLiveData<String>()
-//    val price : LiveData<String>
-//    get() = liveDataPrice
 
-    // N등분 이후의 금액
-    private val liveDataResult = MutableLiveData<String>()
-    val result : LiveData<String>
-    get() = liveDataPrice
 
+    fun goDutch() {
+        val df = DecimalFormat("#,###")
+
+        if (liveDataPrice.value?.isNullOrEmpty() == false && liveDataPrice.value?.isNullOrBlank() == false) {
+            liveDataResult.value =
+                df.format(liveDataPrice.value?.toInt()!! / liveDataCount.value?.toInt()!!)
+        } else {
+            liveDataResult.value = "0"
+        }
+    }
 
     fun increaseClick(view: View) {
         liveDataCount.value = liveDataCount.value?.toInt()?.plus(1).toString()
+        goDutch()
     }
 
     fun decreaseClick(view: View) {
@@ -38,6 +40,7 @@ class SpiltActivityViewModel(application: Application) : AndroidViewModel(applic
             return
         }
         liveDataCount.value = liveDataCount.value?.toInt()?.minus(1).toString()
+        goDutch()
     }
 
 }
