@@ -20,6 +20,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: MainActivityViewModel
     private lateinit var adapter: HistoryAdapter
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity() {
         initialize()
         showHistory()
         goSplitActivity()
+
     }
 
     private fun initialize() {
@@ -47,8 +49,10 @@ class MainActivity : AppCompatActivity() {
         viewModel.historyState.observe(this, Observer {
             if(binding.historyLayout.visibility == View.GONE) {
                 binding.historyLayout.visibility = View.VISIBLE
+                binding.btHistory.setImageResource(R.drawable.ic_carculator_icon)
             } else {
                 binding.historyLayout.visibility = View.GONE
+                binding.btHistory.setImageResource(R.drawable.ic_history_icon)
             }
         })
 
@@ -58,7 +62,7 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    fun goSplitActivity() {
+    private fun goSplitActivity() {
         binding.btSplit.setOnClickListener {
             val intent = Intent(this, SplitActivity::class.java)
             startActivity(intent)
