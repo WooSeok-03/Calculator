@@ -4,23 +4,19 @@ import android.app.Application
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.android.calculator.model.History
+import com.android.calculator.model.HistoryDao
 import com.android.calculator.model.HistoryDatabase
 import kotlinx.coroutines.*
 import java.lang.NumberFormatException
 import java.text.DecimalFormat
+import javax.script.ScriptEngine
+import javax.script.ScriptEngineManager
 
-class MainActivityViewModel(application: Application) : AndroidViewModel(application) {
-    private val mApplication = application
+class MainActivityViewModel(private val historyDao: HistoryDao) : ViewModel() {
 
-    private val operatorList = listOf("+", "-", "×", "÷")
-    private var operatorFlag = false
-    private var equalsFlag = false
-    private var dotFlag = false
+    private val operatorList = listOf("+", "-", "*", "/")
 
     // 계산기록 보기/가리기
     private var lvHistoryState = MutableLiveData(false)
@@ -28,7 +24,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     get() = lvHistoryState
 
     // 계산식 LiveData
-    private val liveDataFormula = MutableLiveData<String>()
+    private val liveDataFormula = MutableLiveData<String>("0")
     val formula : LiveData<String>
     get() = liveDataFormula
 
@@ -42,173 +38,72 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     val history : LiveData<List<History>>
     get() = liveDataHistory
 
-    init {
+    private val scriptEngine by lazy { ScriptEngineManager().getEngineByName("rhino") }
+
+
+    fun clear() {
         liveDataFormula.value = "0"
+        liveDataResult.value = ""
     }
 
-    fun buttonClick(view: View) {
-        if (lvHistoryState.value == true) return
+    fun appendFormula(item: String) {
+        val currentString = liveDataFormula.value ?: "0"
 
-        if (liveDataFormula.value?.length!! >= 15) {
-            Toast.makeText(mApplication, "15자리까지 입력할 수 있습니다.\n(숫자, 연산자 포함)", Toast.LENGTH_SHORT).show()
-            return
-        }
+        if(currentString == "0" && item.toIntOrNull() == 0) return
 
-        when(view.id) {
-            R.id.bt_clear -> {
-                liveDataFormula.value = "0"
-                liveDataResult.value = ""
-            }
-            R.id.bt_plus, R.id.bt_minus, R.id.bt_multiplication, R.id.bt_division -> {
-                if (equalsFlag) return
-                operatorClick(view.id)
-            }
-            R.id.bt_backspace -> liveDataFormula.value = backSpaceClick()
-            R.id.bt_double_zero -> numberClick("00")
-            R.id.bt_zero -> numberClick("0")
-            R.id.bt_one -> numberClick("1")
-            R.id.bt_two -> numberClick("2")
-            R.id.bt_three -> numberClick("3")
-            R.id.bt_four -> numberClick("4")
-            R.id.bt_five -> numberClick("5")
-            R.id.bt_six -> numberClick("6")
-            R.id.bt_seven -> numberClick("7")
-            R.id.bt_eight -> numberClick("8")
-            R.id.bt_nine -> numberClick("9")
-            else -> return
-        }
-    }
-
-    private fun numberClick(number: String) {
-        // 이전 계산이 TextView에 남아 있는 경우 ( equalsFlag == true )
-        if (equalsFlag) {
-            equalsFlag = false
-            liveDataFormula.value = "0"
-            liveDataResult.value = ""
-        }
-
-        // 계산식 TextView가 현재 아무것도 없는 상태에서 숫자 입력
-        if (liveDataFormula.value == "0") {
-            when(number) {
-                "1" -> liveDataFormula.value = "1"
-                "2" -> liveDataFormula.value = "2"
-                "3" -> liveDataFormula.value = "3"
-                "4" -> liveDataFormula.value = "4"
-                "5" -> liveDataFormula.value = "5"
-                "6" -> liveDataFormula.value = "6"
-                "7" -> liveDataFormula.value = "7"
-                "8" -> liveDataFormula.value = "8"
-                "9" -> liveDataFormula.value = "9"
-                else -> liveDataFormula.value = "0"
-            }
-        } else {
-            when(number) {
-                "00" -> liveDataFormula.value = liveDataFormula.value.plus("00")
-                "0" -> liveDataFormula.value = liveDataFormula.value.plus("0")
-                "1" -> liveDataFormula.value = liveDataFormula.value.plus("1")
-                "2" -> liveDataFormula.value = liveDataFormula.value.plus("2")
-                "3" -> liveDataFormula.value = liveDataFormula.value.plus("3")
-                "4" -> liveDataFormula.value = liveDataFormula.value.plus("4")
-                "5" -> liveDataFormula.value = liveDataFormula.value.plus("5")
-                "6" -> liveDataFormula.value = liveDataFormula.value.plus("6")
-                "7" -> liveDataFormula.value = liveDataFormula.value.plus("7")
-                "8" -> liveDataFormula.value = liveDataFormula.value.plus("8")
-                "9" -> liveDataFormula.value = liveDataFormula.value.plus("9")
-                else -> return
-            }
-        }
-    }
-
-    private fun operatorClick(viewId : Int) {
-        // 처음에는 연산자가 들어갈 수 없음 || 연산자 1개만 사용
-        if (liveDataFormula.value == "0" || operatorFlag) return
-
-        when (viewId) {
-            R.id.bt_plus -> liveDataFormula.value = liveDataFormula.value.plus("+")
-            R.id.bt_minus -> liveDataFormula.value = liveDataFormula.value.plus("-")
-            R.id.bt_multiplication -> liveDataFormula.value = liveDataFormula.value.plus("×")
-            R.id.bt_division -> liveDataFormula.value = liveDataFormula.value.plus("÷")
-            else -> return
-        }
-
-        operatorFlag = true
-        dotFlag = false
-    }
-
-    fun dotClick() {
-        // . 가 이미 들어간 수에는 입력할 수 없음
-        if (dotFlag) return
-
-        // 마지막 문자가 연산자인 경우, . 를 적을 수 없음
-        for(i in operatorList) {
-            if (liveDataFormula.value?.endsWith(i) == true) return
-        }
-
-        liveDataFormula.value = liveDataFormula.value.plus(".")
-        dotFlag = true
-    }
-
-    private fun backSpaceClick(): String? {
-        val currentFormula = liveDataFormula.value?.replaceFirst(".$".toRegex(), "")
-
-        // 초기 값인 0일 때는 백스페이스 적용 X || 백스페이스한 후의 TextView가 비어있지 않도록 한다
-        if(liveDataFormula.value == "0" || currentFormula == "") return "0"
-
-        for (i in operatorList) {
-            if(formula.value?.contains(i) == false) operatorFlag = false
-        }
-        return currentFormula
-    }
-
-    fun equalsClick() {
-        lateinit var numberList : List<String>
-        val df = DecimalFormat("#.##")  // 소수점 2자리수 까지만 나타내도록 format
-
-        try {
-            if(formula.value?.contains("+") == true){
-
-                numberList = formula.value?.split("+")!!
-                val plusFormula = numberList[0].toDouble() + numberList[1].toDouble()
-                liveDataResult.value = df.format(plusFormula)
-
-            } else if(formula.value?.contains("-") == true) {
-
-                numberList = formula.value?.split("-")!!
-                val minusFormula = numberList[0].toDouble() - numberList[1].toDouble()
-                liveDataResult.value = df.format(minusFormula)
-
-            } else if(formula.value?.contains("×") == true) {
-
-                numberList = formula.value?.split("×")!!
-                val multiplicationFormula = numberList[0].toDouble() * numberList[1].toDouble()
-                liveDataResult.value = df.format(multiplicationFormula)
-
-            } else if(formula.value?.contains("÷") == true) {
-
-                numberList = formula.value?.split("÷")!!
-                val divisionFormula = numberList[0].toDouble() / numberList[1].toDouble()
-                liveDataResult.value = df.format(divisionFormula)
-
-            } else {
-                // 수식에서 연산자를 입력하지 않은 경우
-                numberList = listOf("0")
-                Toast.makeText(mApplication, "계산할 수 없습니다.", Toast.LENGTH_SHORT).show()
+        if(operatorList.contains(item)) {
+            val lastItem = currentString.last().toString()
+            if(operatorList.contains(currentString.last().toString()) && operatorList.contains(item)) {
+                removeFormula()
+            } else if(lastItem == ".") {
                 return
             }
-        } catch (e: NumberFormatException) {
-            // 수식에서 연산자가 가장 마지막에 적혀있을 때, equalsClick()를 호출한 경우
-            Toast.makeText(mApplication, "계산할 수 없습니다.", Toast.LENGTH_SHORT).show()
-            return
         }
 
-        // 계산 결과를 Insert
-        val historyFormula: String = formula.value.toString()
-        val historyResult: String = result.value.toString()
-        historyInsert(History(history_formula = historyFormula, history_result = historyResult))
+        if(item == ".") {
+            val lastOperatorIndex = currentString.lastIndexOfAny(operatorList)
+            if(lastOperatorIndex == currentString.length - 1) return                    // 10+
 
-        operatorFlag = false
-        equalsFlag = true
-        dotFlag = false
+            val lastNumber =
+                if(lastOperatorIndex == -1) currentString                               // 10
+                else currentString.substring(lastOperatorIndex + 1)            // 10+10
+
+            if(lastNumber.isNullOrEmpty() || lastNumber.contains(".")) return     // 10.1234
+        } else {
+            if(currentString == "0") liveDataFormula.value = ""
+        }
+
+        liveDataFormula.value = liveDataFormula.value?.plus(item)
+    }
+
+    fun removeFormula() {
+        val currentString = liveDataFormula.value ?: return
+        if(currentString.length > 1) {
+            liveDataFormula.value = currentString.substring(0, currentString.length -1)
+        } else {
+            liveDataFormula.value = "0"
+        }
+    }
+
+    fun evaluate() {
+        val currentFormula = liveDataFormula.value ?: return
+        scriptEngine.runCatching {
+            eval(currentFormula)
+        }.onSuccess {
+            val result = "%.2f".format(it.toString().toDouble()).run {
+                if (currentFormula.contains(".")) this
+                else replace(".00", "")
+            }
+
+            liveDataResult.value = result
+
+            historyInsert(
+                History(
+                    history_formula = currentFormula,
+                    history_result = result
+                )
+            )
+        }.onFailure { }
     }
 
 
@@ -219,29 +114,27 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     }
 
     private fun historyGetAll() {
-        val historyDB = HistoryDatabase.getInstance(mApplication)
         viewModelScope.launch(Dispatchers.IO) {
-            val items = historyDB?.historyDao()?.getAll()
-            withContext(Dispatchers.Main) {
-                liveDataHistory.value = items
-            }
+            val items = historyDao.getAll()
+            liveDataHistory.postValue(items)
         }
     }
 
     private fun historyInsert(history: History) {
-        val historyDB = HistoryDatabase.getInstance(mApplication)
-        viewModelScope.launch(Dispatchers.IO) {
-            historyDB?.historyDao()?.insert(history)
+        viewModelScope.launch(Dispatchers.IO){
+            historyDao.insert(history)
         }
     }
 
     fun historyDeleteAll() {
-        val historyDB = HistoryDatabase.getInstance(mApplication)
-        viewModelScope.launch {
-            historyDB?.historyDao()?.deleteAll()
-            withContext(Dispatchers.Main) {
-                liveDataHistory.value = listOf()
-            }
+        viewModelScope.launch(Dispatchers.IO) {
+            historyDao.deleteAll()
+            liveDataHistory.postValue(listOf())
         }
+    }
+
+    fun historyDelete(history: History) = viewModelScope.launch(Dispatchers.IO) {
+        historyDao.delete(history)
+        historyGetAll()
     }
 }

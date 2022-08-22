@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="viewModel"
             type="com.android.calculator.MainActivityViewModel" />
@@ -47,8 +48,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginBottom="6dp"
-            android:src="@drawable/ic_n_icon"
             android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_n_icon"
             app:layout_constraintBottom_toBottomOf="@+id/bt_history"
             app:layout_constraintStart_toEndOf="@+id/bt_history" />
 
@@ -58,9 +59,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginBottom="12dp"
-            android:src="@drawable/ic_history_icon"
-            android:onClick="@{()->viewModel.viewHistory()}"
             android:background="?attr/selectableItemBackgroundBorderless"
+            android:onClick="@{()->viewModel.viewHistory()}"
+            android:src="@drawable/ic_history_icon"
             app:layout_constraintBottom_toTopOf="@+id/appCompatImageView"
             app:layout_constraintStart_toStartOf="parent" />
 
@@ -81,7 +82,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:onClick="@{viewModel::buttonClick}"
             android:src="@drawable/ic_backspace_button"
             app:layout_constraintBottom_toTopOf="@+id/bt_multiplication"
             app:layout_constraintStart_toEndOf="@+id/bt_minus" />
@@ -93,7 +93,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:onClick="@{viewModel::buttonClick}"
             android:src="@drawable/ic_minus_button"
             app:layout_constraintBottom_toTopOf="@+id/bt_nine"
             app:layout_constraintStart_toEndOf="@+id/bt_plus" />
@@ -105,7 +104,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:onClick="@{viewModel::buttonClick}"
             android:src="@drawable/ic_plus_button"
             app:layout_constraintBottom_toTopOf="@+id/bt_eight"
             app:layout_constraintStart_toEndOf="@+id/bt_clear" />
@@ -117,7 +115,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:onClick="@{viewModel::buttonClick}"
             android:src="@drawable/ic_clear_button"
             app:layout_constraintBottom_toTopOf="@+id/bt_seven"
             app:layout_constraintStart_toStartOf="parent" />
@@ -129,7 +126,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:onClick="@{viewModel::buttonClick}"
             android:src="@drawable/ic_multiplication_button"
             app:layout_constraintBottom_toTopOf="@+id/bt_division"
             app:layout_constraintStart_toEndOf="@+id/bt_nine" />
@@ -141,7 +137,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:onClick="@{viewModel::buttonClick}"
             android:src="@drawable/ic_nine_button"
             app:layout_constraintBottom_toTopOf="@+id/bt_six"
             app:layout_constraintStart_toEndOf="@+id/bt_eight" />
@@ -153,7 +148,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:onClick="@{viewModel::buttonClick}"
             android:src="@drawable/ic_eight_button"
             app:layout_constraintBottom_toTopOf="@+id/bt_five"
             app:layout_constraintStart_toEndOf="@+id/bt_seven" />
@@ -165,7 +159,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:onClick="@{viewModel::buttonClick}"
             android:src="@drawable/ic_seven_button"
             app:layout_constraintBottom_toTopOf="@+id/bt_four"
             app:layout_constraintStart_toStartOf="parent" />
@@ -177,7 +170,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:onClick="@{viewModel::buttonClick}"
             android:src="@drawable/ic_division_button"
             app:layout_constraintBottom_toTopOf="@+id/bt_equals"
             app:layout_constraintStart_toEndOf="@+id/bt_six" />
@@ -189,7 +181,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:onClick="@{viewModel::buttonClick}"
             android:src="@drawable/ic_six_button"
             app:layout_constraintBottom_toTopOf="@+id/bt_three"
             app:layout_constraintStart_toEndOf="@+id/bt_five" />
@@ -201,7 +192,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:onClick="@{viewModel::buttonClick}"
             android:src="@drawable/ic_five_button"
             app:layout_constraintBottom_toTopOf="@+id/bt_two"
             app:layout_constraintStart_toEndOf="@+id/bt_four" />
@@ -213,7 +203,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:onClick="@{viewModel::buttonClick}"
             android:src="@drawable/ic_four_button"
             app:layout_constraintBottom_toTopOf="@+id/bt_one"
             app:layout_constraintStart_toStartOf="parent" />
@@ -225,7 +214,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:onClick="@{viewModel::buttonClick}"
             android:src="@drawable/ic_one_button"
             app:layout_constraintBottom_toTopOf="@+id/bt_double_zero"
             app:layout_constraintStart_toStartOf="parent" />
@@ -237,7 +225,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:onClick="@{viewModel::buttonClick}"
             android:src="@drawable/ic_two_button"
             app:layout_constraintBottom_toTopOf="@+id/bt_zero"
             app:layout_constraintStart_toEndOf="@+id/bt_one" />
@@ -249,7 +236,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:onClick="@{viewModel::buttonClick}"
             android:src="@drawable/ic_three_button"
             app:layout_constraintBottom_toTopOf="@+id/bt_dot"
             app:layout_constraintStart_toEndOf="@+id/bt_two" />
@@ -261,7 +247,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginBottom="16dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:onClick="@{viewModel::buttonClick}"
             android:src="@drawable/ic_double_zero_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -273,7 +258,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginBottom="16dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:onClick="@{viewModel::buttonClick}"
             android:src="@drawable/ic_zero_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/bt_double_zero" />
@@ -285,7 +269,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginBottom="16dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:onClick="@{()->viewModel.dotClick()}"
             android:src="@drawable/ic_dot_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/bt_zero" />
@@ -297,7 +280,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginBottom="16dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:onClick="@{()->viewModel.equalsClick()}"
             android:src="@drawable/ic_equals_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/bt_dot" />
@@ -327,8 +309,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
-                    android:src="@drawable/ic_all_delete_button"
                     android:onClick="@{()->viewModel.historyDeleteAll()}"
+                    android:src="@drawable/ic_all_delete_button"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />

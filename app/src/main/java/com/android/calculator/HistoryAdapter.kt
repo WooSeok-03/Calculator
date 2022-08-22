@@ -14,7 +14,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class HistoryAdapter(private val context: Context) : RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() {
+class HistoryAdapter : RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() {
 
     inner class HistoryViewHolder(val binding: ItemHistoryBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(history: History) {
@@ -35,8 +35,13 @@ class HistoryAdapter(private val context: Context) : RecyclerView.Adapter<Histor
 
         // 삭제 버튼 클릭 시,
         holder.binding.btDelete.setOnClickListener {
-            deleteList(items[position])
+            onDeleteClickCallBack?.invoke(items[position])
         }
+    }
+
+    private var onDeleteClickCallBack: ((History)-> Unit)? = null
+    fun setOnHistoryDeleteClickListner(callback: (History)-> Unit) {
+        onDeleteClickCallBack = callback
     }
 
     override fun getItemCount(): Int = items.size
@@ -47,15 +52,4 @@ class HistoryAdapter(private val context: Context) : RecyclerView.Adapter<Histor
         notifyDataSetChanged()
     }
 
-    private fun deleteList(history: History) {
-        items.remove(history)   // RecyclerView에서 삭제
-
-        // Room에서 삭제
-        val historyDB = HistoryDatabase.getInstance(context)
-        CoroutineScope(Dispatchers.IO).launch {
-            historyDB?.historyDao()?.delete(history)
-        }
-
-        notifyDataSetChanged()
-    }
 }
