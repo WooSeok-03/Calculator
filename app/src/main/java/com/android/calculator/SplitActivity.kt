@@ -38,8 +38,7 @@ class SplitActivity : AppCompatActivity() {
 
     private fun backButtonClick() {
         binding.btGoBack.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+            finish()
         }
     }
 
