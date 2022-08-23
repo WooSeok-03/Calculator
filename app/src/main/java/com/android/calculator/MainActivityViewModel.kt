@@ -100,7 +100,7 @@ class MainActivityViewModel(private val historyDao: HistoryDao) : ViewModel() {
             historyInsert(
                 History(
                     history_formula = currentFormula,
-                    history_result = result
+                    history_result = "= $result"
                 )
             )
         }.onFailure { }
