@@ -16,6 +16,7 @@ import javax.script.ScriptEngineManager
 
 class MainActivityViewModel(private val historyDao: HistoryDao) : ViewModel() {
 
+    // 연산자 List
     private val operatorList = listOf("+", "-", "*", "/")
 
     // 계산기록 보기/가리기
@@ -41,41 +42,45 @@ class MainActivityViewModel(private val historyDao: HistoryDao) : ViewModel() {
     private val scriptEngine by lazy { ScriptEngineManager().getEngineByName("rhino") }
 
 
+    // 계산식, 계산결과 초기화
     fun clear() {
         liveDataFormula.value = "0"
         liveDataResult.value = ""
     }
 
+    // 계산식 (숫자, 연산자)입력
     fun appendFormula(item: String) {
         val currentString = liveDataFormula.value ?: "0"
 
-        if(currentString == "0" && item.toIntOrNull() == 0) return
+        if(currentString == "0" && item.toIntOrNull() == 0) return  // 처음 입력한 숫자가 0인 경우
 
         if(operatorList.contains(item)) {
             val lastItem = currentString.last().toString()
             if(operatorList.contains(currentString.last().toString()) && operatorList.contains(item)) {
-                removeFormula()
+                removeFormula()             // 계산식에 연속으로 연산자가 들어온 경우
             } else if(lastItem == ".") {
-                return
+                return                      // 마지막에 입력된 것이 .인 경우
             }
         }
 
         if(item == ".") {
             val lastOperatorIndex = currentString.lastIndexOfAny(operatorList)
-            if(lastOperatorIndex == currentString.length - 1) return                    // 10+
+            if(lastOperatorIndex == currentString.length - 1) return                    // CASE : 10+
 
             val lastNumber =
-                if(lastOperatorIndex == -1) currentString                               // 10
-                else currentString.substring(lastOperatorIndex + 1)            // 10+10
+                if(lastOperatorIndex == -1) currentString                               // CASE : 10
+                else currentString.substring(lastOperatorIndex + 1)            // CASE : 10+10
 
-            if(lastNumber.isNullOrEmpty() || lastNumber.contains(".")) return     // 10.1234
+            if(lastNumber.isNullOrEmpty() || lastNumber.contains(".")) return     // CASE : 10.1234
+
         } else {
-            if(currentString == "0") liveDataFormula.value = ""
+            if(currentString == "0") liveDataFormula.value = ""     // 계산식에 처음 입력하는 경우
         }
 
-        liveDataFormula.value = liveDataFormula.value?.plus(item)
+        liveDataFormula.value = liveDataFormula.value?.plus(item)   // 입력
     }
 
+    // BackSpace
     fun removeFormula() {
         val currentString = liveDataFormula.value ?: return
         if(currentString.length > 1) {
@@ -90,13 +95,15 @@ class MainActivityViewModel(private val historyDao: HistoryDao) : ViewModel() {
         scriptEngine.runCatching {
             eval(currentFormula)
         }.onSuccess {
+            // 계산결과 소수점 두 번째까지 나타내기
             val result = "%.2f".format(it.toString().toDouble()).run {
                 if (currentFormula.contains(".")) this
-                else replace(".00", "")
+                else replace(".00", "")     // (자연수)소수점 2번째까지 모두 0인경우, 소수점 떼기
             }
 
             liveDataResult.value = result
 
+            // Room Insert
             historyInsert(
                 History(
                     history_formula = currentFormula,
