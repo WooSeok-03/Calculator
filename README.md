@@ -2,7 +2,7 @@
 
 >**[자세한 설명](https://www.notion.so/Simple-Calculator-8bd5f7178e5b45dcac413586ba27ab44)**
 
-## 개발언어/툴
+## 📝개발언어/툴
 * Kotlin
 * Android Studio
 
