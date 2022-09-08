@@ -1,17 +1,9 @@
 package com.android.calculator
 
-import android.app.Application
-import android.util.Log
-import android.view.View
-import android.widget.Toast
 import androidx.lifecycle.*
 import com.android.calculator.model.History
 import com.android.calculator.model.HistoryDao
-import com.android.calculator.model.HistoryDatabase
 import kotlinx.coroutines.*
-import java.lang.NumberFormatException
-import java.text.DecimalFormat
-import javax.script.ScriptEngine
 import javax.script.ScriptEngineManager
 
 class MainActivityViewModel(private val historyDao: HistoryDao) : ViewModel() {
